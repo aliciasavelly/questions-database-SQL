@@ -1,6 +1,7 @@
 require 'sqlite3'
 require_relative 'questionsdbconnection'
 require_relative 'user'
+require_relative 'question_follow'
 
 class Question
   attr_accessor :id, :title, :body, :user_id
@@ -53,6 +54,12 @@ class Question
     Reply.find_by_question_id(@id)
   end
 
-  
+  def followers
+    QuestionFollow.followers_for_question_id(@id)
+  end
+
+  def self.most_followed(n)
+    QuestionFollow.most_followed_questions(n)
+  end
 
 end
