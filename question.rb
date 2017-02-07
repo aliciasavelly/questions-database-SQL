@@ -1,5 +1,6 @@
 require 'sqlite3'
-require 'questionsdbconnection'
+require_relative 'questionsdbconnection'
+require_relative 'user'
 
 class Question
   attr_accessor :id, :title, :body, :user_id
@@ -30,5 +31,28 @@ class Question
     Question.new(question.first)
   end
 
+  def self.find_by_author_id(user_id)
+    questions = QuestionsDBConnection.instance.execute(<<-SQL, user_id)
+      SELECT
+        *
+      FROM
+        questions
+      WHERE
+        user_id = ?
+    SQL
+    return nil if questions.empty?
+
+    questions.map { |question| Question.new(question) }
+  end
+
+  def author
+    User.find_by_id(@user_id)
+  end
+
+  def replies
+    Reply.find_by_question_id(@id)
+  end
+
+  
 
 end
