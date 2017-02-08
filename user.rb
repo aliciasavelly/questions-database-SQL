@@ -82,4 +82,26 @@ class User
     karma[0].values.last / karma[0].values.first
   end
 
+  def save
+    return self.update if @id
+
+    QuestionsDBConnection.instance.execute(<<-SQL, @fname, @lname)
+      INSERT INTO
+        users(fname, lname)
+      VALUES
+        (?, ?)
+    SQL
+    @id = QuestionsDBConnection.instance.last_insert_row_id
+  end
+
+  def update
+    QuestionsDBConnection.instance.execute(<<-SQL, @fname, @lname, @id)
+      UPDATE
+        users
+      SET
+        fname = ?, lname = ?
+      WHERE
+        id = ?
+    SQL
+  end
 end

@@ -76,4 +76,27 @@ class Question
     QuestionLike.most_liked_questions(n)
   end
 
+  def save
+    return self.update if @id
+
+    QuestionsDBConnection.instance.execute(<<-SQL, @title, @body, @user_id)
+      INSERT INTO
+        questions (title, body, user_id)
+      VALUES
+        (?, ?, ?)
+    SQL
+    @id = QuestionsDBConnection.instance.last_insert_row_id
+  end
+
+  def update
+    QuestionsDBConnection.instance.execute(<<-SQL, @title, @body, @user_id, @id)
+      UPDATE
+        questions
+      SET
+        title = ?, body = ?, user_id = ?
+      WHERE
+        id = ?
+    SQL
+  end
+
 end

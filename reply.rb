@@ -85,4 +85,28 @@ class Reply
     replies.map { |reply| Reply.new(reply) }
   end
 
+  def save
+    return self.update if @id
+
+    QuestionsDBConnection.instance.execute(<<-SQL, @question_id, @reply_id, @user_id, @body)
+      INSERT INTO
+        replies (question_id, reply_id, user_id, body)
+      VALUES
+        (?, ?, ?, ?)
+    SQL
+    @id = QuestionsDBConnection.instance.last_insert_row_id
+  end
+
+  def update
+    QuestionsDBConnection.instance.execute(<<-SQL, @question_id, @reply_id, @user_id, @body, @id)
+      UPDATE
+        replies
+      SET
+        question_id = ?, reply_id = ?, user_id = ?, body = ?
+      WHERE
+        id = ?
+    SQL
+  end
+
+
 end
