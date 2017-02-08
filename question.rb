@@ -2,6 +2,8 @@ require 'sqlite3'
 require_relative 'questionsdbconnection'
 require_relative 'user'
 require_relative 'question_follow'
+require_relative 'question_like'
+
 
 class Question
   attr_accessor :id, :title, :body, :user_id
@@ -60,6 +62,18 @@ class Question
 
   def self.most_followed(n)
     QuestionFollow.most_followed_questions(n)
+  end
+
+  def likers
+    QuestionLike.likers_for_question_id(@id)
+  end
+
+  def num_likes
+    QuestionLike.num_likes_for_question_id(@id)
+  end
+
+  def self.most_liked(n)
+    QuestionLike.most_liked_questions(n)
   end
 
 end

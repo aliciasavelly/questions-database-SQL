@@ -72,8 +72,6 @@ class QuestionFollow
         questions ON question_follows.question_id = questions.id
       ORDER BY
         question_follows.question_id DESC
-      -- HAVING
-      --   COUNT(question_follows.question_id)
       LIMIT
         ?
     SQL
